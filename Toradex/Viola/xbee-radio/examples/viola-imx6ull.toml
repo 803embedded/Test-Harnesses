@@ -1,0 +1,31 @@
+# xbee-link configuration for an XBee3 802.15.4 radio on the 803-001-001 adapter,
+# fitted to a Toradex Viola carrier with a Colibri iMX6ULL module.
+#
+# Settings in [radio.at] are applied on every start and read back to verify
+# them. They are volatile unless `write = true`: a power cycle restores the
+# radio's saved configuration, so the radio can be shared with other software.
+
+[serial]
+port = "/dev/ttymxc1"     # Colibri UART_B (iMX6ULL UART2); ttymxc0 is the console
+baud = 9600               # tried first; other common rates are probed automatically
+flow_control = "rtscts"   # Viola X9 routes RTS/CTS; requires D6 = 1 and D7 = 1
+
+[radio]
+api_mode = 1              # AP=1 (unescaped API frames)
+write = false             # true saves these settings to flash with ATWR
+
+[radio.at]
+BD = 8                    # 230400 baud. At 115200 the receiving radio's UART
+                          # output falls behind back-to-back RF frames and it drops
+                          # frames it has already ACKed
+D6 = 1                    # RTS flow control
+D7 = 1                    # CTS flow control
+MY = 0xFFFE               # 64-bit addressing; receivers can reply to the sender
+CH = 0x0C                 # RF channel (both radios must match)
+ID = 0x3332               # PAN ID (both radios must match)
+PL = 4                    # maximum transmit power: worst-case supply current
+
+[link]
+# Default destination for `xbee-link tx`. Run `xbee-link info` on the other
+# board to read its 64-bit address, or pass --peer on the command line.
+# peer = "0013A20012345678"
