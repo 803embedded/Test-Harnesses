@@ -1,0 +1,4 @@
+# Known-good production dependency set. Keep project metadata compatible while
+# making manufacturing/container installs repeatable.
+digi-xbee==1.5.0
+pyserial==3.5

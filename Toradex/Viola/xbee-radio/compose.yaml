@@ -1,0 +1,45 @@
+# Run from this directory on the target. See README.md for the full workflow.
+#
+#   docker compose build                         # once, and after updating the source
+#   docker compose run --rm xbee-link info       # one-off command (any xbee-link arguments)
+#   docker compose up rx                         # long-running receiver, logs in the terminal
+#   XBEE_PEER=0013A2... docker compose up tx     # long-running sender
+#   docker compose stop rx | tx                  # or Ctrl-C in the terminal running it
+#   docker compose --profile rx --profile tx down   # remove the stopped containers
+#
+# Settings: XBEE_LINK_CONFIG_FILE (config file), XBEE_PEER (tx destination),
+# and how long the sender transmits at full rate: TX_DURATION (seconds) or
+# TX_TOTAL (bytes, e.g. 10M), not both. With neither, it runs for 300 seconds.
+
+x-xbee-link: &xbee-link
+  image: xbee-link:local
+  build: .
+  devices:
+    - /dev/ttymxc1:/dev/ttymxc1
+  volumes:
+    - ${XBEE_LINK_CONFIG_FILE:-./examples/viola-imx6ull.toml}:/etc/xbee-link/config.toml:ro
+  init: true
+  restart: "no"
+
+services:
+  xbee-link:
+    <<: *xbee-link
+    profiles: ["cli"]
+    environment:
+      XBEE_PEER: ${XBEE_PEER:-}
+
+  rx:
+    <<: *xbee-link
+    profiles: ["rx"]
+    container_name: xbee-link-rx
+    command: ["rx", "--count", "0", "--start-timeout", "0"]
+
+  tx:
+    <<: *xbee-link
+    profiles: ["tx"]
+    container_name: xbee-link-tx
+    environment:
+      XBEE_PEER: ${XBEE_PEER:-}
+      XBEE_TX_DURATION: ${TX_DURATION:-}
+      XBEE_TX_TOTAL: ${TX_TOTAL:-}
+    command: ["tx"]

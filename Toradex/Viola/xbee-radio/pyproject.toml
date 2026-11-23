@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools==80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "xbee-link"
+version = "0.1.0"
+description = "Dependency-free XBee API driver, buffer transfer and RF link test"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7",
+    "ruff>=0.4",
+    "mypy>=1.8",
+]
+
+[project.scripts]
+xbee-link = "xbee_link.__main__:main"
+
+[project.urls]
+Repository = "https://github.com/803embedded/Test-Harnesses"
+Issues = "https://github.com/803embedded/Test-Harnesses/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "ARG"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["ARG"]
+
+[tool.mypy]
+python_version = "3.11"
+# The serial layer uses termios; check against Linux even on a Windows host.
+platform = "linux"
+packages = ["xbee_link"]
+mypy_path = "src"
+strict = true
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

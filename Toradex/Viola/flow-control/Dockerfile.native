@@ -1,0 +1,31 @@
+# Build a standalone Linux/ARMv7 executable. Docker is required only on the
+# development computer; the exported executable does not require Docker or
+# Python on the target.
+FROM python:3.11.16-slim-bookworm@sha256:528257d48c1da0dcecc2e725d1ae34498d60c965f1241e39cd6a85a8859bdf84 AS builder
+
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends binutils gcc libc6-dev zlib1g-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build
+
+COPY pyproject.toml README.md constraints.txt constraints-native.txt ./
+COPY src/ ./src/
+
+RUN pip install --no-cache-dir --constraint constraints-native.txt . pyinstaller
+
+# Build from the installed console script so adapter_test remains a proper
+# package and its relative imports work in the frozen application.
+RUN pyinstaller \
+    --clean \
+    --noconfirm \
+    --onefile \
+    --name adapter-test \
+    --collect-submodules digi.xbee \
+    /usr/local/bin/adapter-test \
+    && dist/adapter-test --version
+
+# BuildKit's local output exporter copies this file to the development
+# computer without creating a runnable container image.
+FROM scratch AS export
+COPY --from=builder /build/dist/adapter-test /adapter-test

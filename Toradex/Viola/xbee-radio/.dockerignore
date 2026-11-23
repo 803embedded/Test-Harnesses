@@ -1,0 +1,4 @@
+*
+!src/xbee_link/**
+!examples/**
+**/__pycache__

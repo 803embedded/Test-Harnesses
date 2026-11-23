@@ -1,0 +1,30 @@
+# Local configuration and secrets
+.env
+.env.*
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Dependencies, caches, and build output
+.cache/
+coverage/
+dist/
+dist-native/
+build/
+out/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.venv/
+venv/
+.pytest_cache/
+.pytest_tmp/
+.mypy_cache/
+.ruff_cache/
