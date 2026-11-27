@@ -96,7 +96,7 @@ Use a different serial port or baud rate:
 ssh user@target-host '~/.local/bin/adapter-test --module imx6ull-1gb-it --port /dev/ttymxc2 --baud 115200'
 ```
 
-Run the optional GPIO access and wiring test. It toggles the GPIO lines and resets the XBee:
+Run the complete test: UART, RTS/CTS, and GPIO access and wiring. It toggles the GPIO lines and resets the XBee (see [GPIO test][2] for what the reset clears and when `--baud` is needed):
 
 ```sh
 ssh -t user@target-host 'sudo ~/.local/bin/adapter-test --module imx6ull-1gb-it --check-gpio'
@@ -157,7 +157,7 @@ ssh user@target-host 'docker load -i ~/adapter-test-armv7.tar'
 
 ### Wiring
 
-The adapter-to-Viola wiring, the UART mapping (`/dev/ttymxc1`) and the GPIO numbers are in the [Viola README][2].
+The adapter-to-Viola wiring, the UART mapping (`/dev/ttymxc1`) and the GPIO numbers are in the [Viola README][3].
 
 ### GPIO test
 
@@ -240,7 +240,7 @@ The live-device-tree check is read-only. A missing property or unreadable state 
 
 ### Implementation
 
-The project uses Digi's official [`digi-xbee`][3] library to encode and decode API frames. The radio logic is carrier-independent; the GPIO map is specific to the Viola and Colibri iMX6ULL.
+The project uses Digi's official [`digi-xbee`][4] library to encode and decode API frames. The radio logic is carrier-independent; the GPIO map is specific to the Viola and Colibri iMX6ULL.
 
 - `src/adapter_test/radio.py` - XBee configuration, UART probing, and flow-control and GPIO wiring tests
 - `src/adapter_test/gpio.py` - sysfs GPIO access and line control
@@ -282,9 +282,10 @@ Run `deactivate` to leave the environment. Tools can also be invoked through the
 
 ### License
 
-This project is licensed under the MIT License. See the repository's [`LICENSE`][4].
+This project is licensed under the MIT License. See the repository's [`LICENSE`][5].
 
 [1]: ../xbee-radio/
-[2]: ../README.md#wiring-803-001-001-b
-[3]: https://pypi.org/project/digi-xbee/
-[4]: ../../../LICENSE
+[2]: #gpio-test
+[3]: ../README.md#wiring-803-001-001-b
+[4]: https://pypi.org/project/digi-xbee/
+[5]: ../../../LICENSE
