@@ -135,7 +135,15 @@ ssh user@target-host 'cd ~/adapter-test-source && docker build --pull -t adapter
 ssh user@target-host 'docker run --rm --privileged --device /dev/ttymxc1:/dev/ttymxc1 adapter-test:local --module imx6ull-1gb-it'
 ```
 
-The container needs `--privileged` because the test inspects the live device tree under `/sys/firmware/devicetree`. To build the ARMv7 container on another computer instead, export and transfer its image:
+Run the complete test, including the GPIO access and wiring check:
+
+```sh
+ssh user@target-host 'docker run --rm --privileged --device /dev/ttymxc1:/dev/ttymxc1 adapter-test:local --module imx6ull-1gb-it --check-gpio'
+```
+
+The image stays on the target when it is powered off. After each power-up, run either command again; the image does not need to be rebuilt or copied.
+
+The container needs `--privileged` because the test inspects the live device tree under `/sys/firmware/devicetree`, and the GPIO check needs writable sysfs. With it, the GPIO check does not need `sudo`. To build the ARMv7 container on another computer instead, export and transfer its image:
 
 ```sh
 docker buildx build --platform linux/arm/v7 --output type=docker,dest=adapter-test-armv7.tar -t adapter-test:local .
